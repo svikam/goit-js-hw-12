@@ -3,6 +3,8 @@ import iziToast from "izitoast";
 import "izitoast/dist/css/iziToast.min.css";
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
+import axios from 'axios';
+
 
 import { searchImage } from "./js/pixabay-api.js"
 import { gallery, renderImages } from "./js/render-functions.js"
@@ -32,7 +34,6 @@ function handleSubmit(event) {
         .then(images => {
             if (images.length === 0) {
                 iziToast.show({
-
                     message: 'Sorry, there are no images matching your search query. Please try again!',
                     backgroundColor: '#ef4040',
                     messageSize: '16px',

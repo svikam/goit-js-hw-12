@@ -3,6 +3,10 @@
     text-align: center;
 }
 
+input {
+    outline: none;
+}
+
 .form-input {
     border: 1px solid #808080;
     border-radius: 4px;
