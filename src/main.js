@@ -3,7 +3,7 @@ import iziToast from "izitoast";
 import "izitoast/dist/css/iziToast.min.css";
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
-import axios from 'axios';
+
 
 
 import { searchImage } from "./js/pixabay-api.js"
@@ -12,6 +12,8 @@ import { gallery, renderImages } from "./js/render-functions.js"
 const form = document.querySelector(".form");
 const formInput = document.querySelector(".form-input");
 const loader = document.querySelector(".loader");
+const loadMoreBtn = document.querySelector(".load-more-btn visually-hidden");
+let page = 1;
 
 form.addEventListener("submit", handleSubmit);
 function handleSubmit(event) {
@@ -48,6 +50,10 @@ function handleSubmit(event) {
                     captionDelay: 250,
                 });
                 lightbox.refresh();
+                // page += 1;
+                // if (page > 1) {
+                //     loadMoreBtn.setAttribute("class", "load-more-btn");
+                    // loadMoreBtn.addEventListener("click", loadMore);
             }
         })
         .catch(error => {
@@ -58,6 +64,10 @@ function handleSubmit(event) {
             form.reset();
         });
 }
+
+// function loadMore {
+
+// }
 
 function showLoader() {
     loader.style.display = 'block';
