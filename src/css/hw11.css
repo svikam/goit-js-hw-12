@@ -75,7 +75,7 @@ input {
     border: none;
 }
 
-.visually-hidden {
+.load-more-hidden {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -95,6 +95,7 @@ input {
     max-width: 1128px;
     margin: 0 auto;
     margin-top: 32px;
+    margin-bottom: 32px;
 }
 
 .gallery-item {

@@ -1,8 +1,7 @@
 'use strict';
 import axios from 'axios';
-let page = 1;
 
-export async function searchImage(query) {
+export async function searchImage(query, page) {
     const baseUrl = "https://pixabay.com/api/";
     const params = {
         key: "44056187-241b6d2c7b447ed7c2385a3f0",
@@ -17,6 +16,10 @@ export async function searchImage(query) {
     try {
         const response = await axios.get(baseUrl, { params });
         return response.data.hits;
+        // return {
+        //     hits: response.data.hits,
+        //     totalHits: response.data.totalHits,
+        // };
     } catch (error) {
         console.log("catch", error);
         return [];

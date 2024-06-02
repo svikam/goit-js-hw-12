@@ -31,6 +31,6 @@ export function renderImages(images) {
         </a>
     </li>`)
         .join("");
-    // gallery.insertAdjacentHTML("beforeend", imageMarkup);
-    gallery.innerHTML = imageMarkup;
+    gallery.insertAdjacentHTML("beforeend", imageMarkup);
+    // gallery.innerHTML = imageMarkup;
 }

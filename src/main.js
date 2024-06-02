@@ -4,21 +4,30 @@ import "izitoast/dist/css/iziToast.min.css";
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 
-
-
 import { searchImage } from "./js/pixabay-api.js"
 import { gallery, renderImages } from "./js/render-functions.js"
 
 const form = document.querySelector(".form");
+form.addEventListener("submit", handleSubmit);
+
 const formInput = document.querySelector(".form-input");
 const loader = document.querySelector(".loader");
-const loadMoreBtn = document.querySelector(".load-more-btn visually-hidden");
-let page = 1;
 
-form.addEventListener("submit", handleSubmit);
+const loadMoreBtn = document.querySelector(".load-more-btn");
+loadMoreBtn.addEventListener("click", loadMore);
+
+const lightbox = new SimpleLightbox('.gallery a', {
+    captionsData: 'alt',
+    captionDelay: 250,
+});
+
+let page = 1;
+let query = "";
+let totalHits = 0;
+
 function handleSubmit(event) {
     event.preventDefault();
-    const query = formInput.value.trim(); //те, що ввидиться в інпут користувачем...інакше event.target.elements.query.value.trim()
+    query = formInput.value.trim(); //те, що ввидиться в інпут користувачем...інакше event.target.elements.query.value.trim()
     if (!query) {
         iziToast.show({
             message: 'Please enter data',
@@ -32,7 +41,7 @@ function handleSubmit(event) {
     }
     gallery.innerHTML = "";
     showLoader();
-    searchImage(query)
+    searchImage(query, page)
         .then(images => {
             if (images.length === 0) {
                 iziToast.show({
@@ -45,15 +54,19 @@ function handleSubmit(event) {
                 });
             } else {
                 renderImages(images);
-                const lightbox = new SimpleLightbox('.gallery a', {
-                    captionsData: 'alt',
-                    captionDelay: 250,
-                });
                 lightbox.refresh();
-                // page += 1;
-                // if (page > 1) {
-                //     loadMoreBtn.setAttribute("class", "load-more-btn");
-                    // loadMoreBtn.addEventListener("click", loadMore);
+                if (images.length < 15 ) {
+                    iziToast.show({
+                    message: "We're sorry, but you've reached the end of search results.",
+                    backgroundColor: '#ef4040',
+                    messageSize: '16px',
+                    messageColor: '#fafafb',
+                    messageLineHeight: '150%',
+                    position: 'topRight',
+                    });
+                } else {
+                    loadMoreBtn.classList.replace("load-more-hidden", "load-more");
+                }
             }
         })
         .catch(error => {
@@ -65,18 +78,55 @@ function handleSubmit(event) {
         });
 }
 
-// function loadMore {
-
-// }
+async function loadMore() {
+    page += 1;
+    showLoader();
+    // loadMoreBtn.disabled = true;
+    try {
+        const data = await searchImage(query, page);
+        renderImages(data);
+        console.log(data);
+        lightbox.refresh();
+        scrollToGallery();
+        if (data.length < 15) {
+            iziToast.show({
+                message: "We're sorry, but you've reached the end of search results.",
+                backgroundColor: '#ef4040',
+                messageSize: '16px',
+                messageColor: '#fafafb',
+                messageLineHeight: '150%',
+                position: 'topRight',
+            });
+            loadMoreBtn.classList.replace("load-more", "load-more-hidden");
+        } else {
+            loadMoreBtn.classList.replace("load-more-hidden", "load-more");
+        }
+    } catch (error) {
+        alert(error.message);
+    }
+    finally {
+        hideLoader();
+        // loadMoreBtn.disabled = false;
+    }
+}
 
 function showLoader() {
     loader.style.display = 'block';
+    loadMoreBtn.classList.replace("load-more", "load-more-hidden");
+
 }
 
 function hideLoader() {
     loader.style.display = 'none';
 }
 
+function scrollToGallery() {
+    const galleryItemHeight = document.querySelector(".gallery-item").getBoundingClientRect().height;
+    window.scrollBy({
+        top: galleryItemHeight * 2,
+        behavior: "smooth",
+    });
+}
 
 
 
