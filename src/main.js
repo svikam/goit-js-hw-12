@@ -56,7 +56,7 @@ async function handleSubmit(event) {
         } else {
             renderImages(data.hits);
             lightbox.refresh();
-            if (totalHits < 15 ) {
+            if (totalHits <= 15 ) {
                 iziToast.show({
                 message: "We're sorry, but you've reached the end of search results.",
                 backgroundColor: '#ef4040',
