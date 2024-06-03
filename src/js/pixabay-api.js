@@ -15,9 +15,9 @@ export async function searchImage(query, page) {
 
     try {
         const response = await axios.get(baseUrl, { params });
-        return response.data.hits;
+        return response.data;
         // return {
-        //     hits: response.data.hits,
+        //     images: response.data.hits,
         //     totalHits: response.data.totalHits,
         // };
     } catch (error) {

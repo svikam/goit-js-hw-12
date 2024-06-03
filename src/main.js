@@ -25,7 +25,7 @@ let page = 1;
 let query = "";
 let totalHits = 0;
 
-function handleSubmit(event) {
+async function handleSubmit(event) {
     event.preventDefault();
     query = formInput.value.trim(); //те, що ввидиться в інпут користувачем...інакше event.target.elements.query.value.trim()
     if (!query) {
@@ -40,42 +40,41 @@ function handleSubmit(event) {
         return;
     }
     gallery.innerHTML = "";
-    showLoader();
-    searchImage(query, page)
-        .then(images => {
-            if (images.length === 0) {
+    try {
+        showLoader();
+        const data = await searchImage(query, page);
+        totalHits = data.totalHits;
+        if (totalHits === 0) {
+            iziToast.show({
+                message: 'Sorry, there are no images matching your search query. Please try again!',
+                backgroundColor: '#ef4040',
+                messageSize: '16px',
+                messageColor: '#fafafb',
+                messageLineHeight: '150%',
+                position: 'topRight',
+            });
+        } else {
+            renderImages(data.hits);
+            lightbox.refresh();
+            if (totalHits < 15 ) {
                 iziToast.show({
-                    message: 'Sorry, there are no images matching your search query. Please try again!',
-                    backgroundColor: '#ef4040',
-                    messageSize: '16px',
-                    messageColor: '#fafafb',
-                    messageLineHeight: '150%',
-                    position: 'topRight',
+                message: "We're sorry, but you've reached the end of search results.",
+                backgroundColor: '#ef4040',
+                messageSize: '16px',
+                messageColor: '#fafafb',
+                messageLineHeight: '150%',
+                position: 'topRight',
                 });
             } else {
-                renderImages(images);
-                lightbox.refresh();
-                if (images.length < 15 ) {
-                    iziToast.show({
-                    message: "We're sorry, but you've reached the end of search results.",
-                    backgroundColor: '#ef4040',
-                    messageSize: '16px',
-                    messageColor: '#fafafb',
-                    messageLineHeight: '150%',
-                    position: 'topRight',
-                    });
-                } else {
-                    loadMoreBtn.classList.replace("load-more-hidden", "load-more");
-                }
+                loadMoreBtn.classList.replace("load-more-hidden", "load-more");
             }
-        })
-        .catch(error => {
-            console.log("catch", error);
-        })
-        .finally(() => {
-            hideLoader();
-            form.reset();
-        });
+        }
+    } catch (error) {
+        console.log("catch", error);
+    } finally {
+        hideLoader();
+        form.reset();
+    }
 }
 
 async function loadMore() {
@@ -84,11 +83,11 @@ async function loadMore() {
     // loadMoreBtn.disabled = true;
     try {
         const data = await searchImage(query, page);
-        renderImages(data);
-        console.log(data);
+        renderImages(data.hits);
+        totalHits = data.totalHits;
         lightbox.refresh();
         scrollToGallery();
-        if (data.length < 15) {
+        if (totalHits <= page * 15) {
             iziToast.show({
                 message: "We're sorry, but you've reached the end of search results.",
                 backgroundColor: '#ef4040',
