@@ -28,6 +28,7 @@ let totalHits = 0;
 async function handleSubmit(event) {
     event.preventDefault();
     query = formInput.value.trim(); //те, що ввидиться в інпут користувачем...інакше event.target.elements.query.value.trim()
+    page = 1;
     if (!query) {
         iziToast.show({
             message: 'Please enter data',
